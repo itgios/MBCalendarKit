@@ -10,9 +10,8 @@
 
 #import "CKCalendarDataSource.h"
 #import "CKCalendarDelegate.h"
-#import "CKCalendarEvent.h"
 
-@interface CKCalendarViewController : UINavigationController <CKCalendarViewDelegate, UINavigationControllerDelegate>
+@interface CKCalendarViewController : UINavigationController
 
 @property (nonatomic, assign) id<CKCalendarViewDataSource> dataSource;
 @property (nonatomic, assign) id<CKCalendarViewDelegate, UINavigationControllerDelegate> delegate;

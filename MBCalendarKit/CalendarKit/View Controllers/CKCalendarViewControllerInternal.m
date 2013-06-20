@@ -14,9 +14,9 @@
 
 #import "NSCalendarCategories.h"
 
-@interface CKCalendarViewControllerInternal () <CKCalendarViewDataSource, CKCalendarViewDelegate>
+@interface CKCalendarViewControllerInternal ()<CKCalendarViewDataSource, CKCalendarViewDelegate>
 
-@property (nonatomic, strong) CKCalendarView *calendarView;
+@property (nonatomic, strong)CKCalendarView *calendarView;
 
 @property (nonatomic, strong) UISegmentedControl *modePicker;
 
@@ -53,17 +53,16 @@
     
     [self setModePicker:[[UISegmentedControl alloc] initWithItems:items]];
     [[self modePicker] setSegmentedControlStyle:UISegmentedControlStyleBar];
-    [[self modePicker] addTarget:self action:@selector(modeChangedUsingControl:) forControlEvents:UIControlEventValueChanged];
+    [[self modePicker] addTarget:self action:@selector(modeChangedUsingControl:)forControlEvents:UIControlEventValueChanged];
     [[self modePicker] setSelectedSegmentIndex:0];
     
     /* Toolbar setup */
     
     NSString *todayTitle = NSLocalizedString(@"Today", @"A button which sets the calendar to today.");
     UIBarButtonItem *todayButton = [[UIBarButtonItem alloc] initWithTitle:todayTitle style:UIBarButtonItemStyleBordered target:self action:@selector(todayButtonTapped:)];
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:[self modePicker]];
     
-    [self setToolbarItems:@[todayButton, item] animated:NO];
-    [[self navigationController] setToolbarHidden:NO animated:NO];
+    [[self navigationItem] setTitleView:[self modePicker]];
+    [[self navigationItem] setLeftBarButtonItem:todayButton];
 
 }
 
@@ -71,6 +70,7 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+
 }
 
 #pragma mark - Toolbar Items
@@ -78,58 +78,78 @@
 - (void)modeChangedUsingControl:(id)sender
 {
     [[self calendarView] setDisplayMode:[[self modePicker] selectedSegmentIndex]];
+
 }
 
 - (void)todayButtonTapped:(id)sender
 {
     [[self calendarView] setDate:[NSDate date] animated:NO];
+
 }
 
 #pragma mark - CKCalendarViewDataSource
 
 - (NSArray *)calendarView:(CKCalendarView *)CalendarView eventsForDate:(NSDate *)date
 {
-    if ([[self dataSource] respondsToSelector:@selector(calendarView:eventsForDate:)]) {
+    if ([[self dataSource] respondsToSelector:@selector(calendarView:eventsForDate:)])
+{
         return [[self dataSource] calendarView:CalendarView eventsForDate:date];
-    }
+    
+}
     return nil;
+
 }
 
 #pragma mark - CKCalendarViewDelegate
 
 // Called before/after the selected date changes
-- (void)calendarView:(CKCalendarView *)calendarView willSelectDate:(NSDate *)date
+- (void)calendarView:(CKCalendarView *)CalendarView willSelectDate:(NSDate *)date
 {
-    if ([self isEqual:[self delegate]]) {
+    if ([self isEqual:[self delegate]])
+{
         return;
-    }
     
-    if ([[self delegate] respondsToSelector:@selector(calendarView:willSelectDate:)]) {
-        [[self delegate] calendarView:calendarView willSelectDate:date];
-    }
+}
+    
+    if ([[self delegate] respondsToSelector:@selector(calendarView:willSelectDate:)])
+{
+        [[self delegate] calendarView:CalendarView willSelectDate:date];
+    
 }
 
-- (void)calendarView:(CKCalendarView *)calendarView didSelectDate:(NSDate *)date
+}
+
+- (void)calendarView:(CKCalendarView *)CalendarView didSelectDate:(NSDate *)date
 {
-    if ([self isEqual:[self delegate]]) {
+    if ([self isEqual:[self delegate]])
+{
         return;
-    }
     
-    if ([[self delegate] respondsToSelector:@selector(calendarView:didSelectDate:)]) {
-        [[self delegate] calendarView:calendarView didSelectDate:date];
-    }
+}
+    
+    if ([[self delegate] respondsToSelector:@selector(calendarView:didSelectDate:)])
+{
+        [[self delegate] calendarView:CalendarView didSelectDate:date];
+    
+}
+
 }
 
 //  A row is selected in the events table. (Use to push a detail view or whatever.)
-- (void)calendarView:(CKCalendarView *)calendarView didSelectEvent:(CKCalendarEvent *)event
+- (void)calendarView:(CKCalendarView *)CalendarView didSelectEvent:(CKCalendarEvent *)event
 {
-    if ([self isEqual:[self delegate]]) {
+    if ([self isEqual:[self delegate]])
+{
         return;
-    }
     
-    if ([[self delegate] respondsToSelector:@selector(calendarView:didSelectEvent:)]) {
-        [[self delegate] calendarView:calendarView didSelectEvent:event];
-    }
+}
+    
+    if ([[self delegate] respondsToSelector:@selector(calendarView:didSelectEvent:)])
+{
+        [[self delegate] calendarView:CalendarView didSelectEvent:event];
+    
+}
+
 }
 
 #pragma mark - Calendar View
@@ -137,5 +157,6 @@
 - (CKCalendarView *)calendarView
 {
     return _calendarView;
+
 }
 @end
