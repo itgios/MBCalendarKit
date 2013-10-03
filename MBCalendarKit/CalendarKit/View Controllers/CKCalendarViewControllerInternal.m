@@ -30,6 +30,29 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+
+    /*  In iOS 7, UIKit will automatically
+     *  put content beneath navigation bars.
+     *  It also tries to pad scroll views
+     *  and table views to make them
+     *  scroll nicely beneath them.
+     *
+     *  These two checks will fix them.
+     *
+     *  For iOS 6 compatibility, we need to
+     *  check if the view controller class
+     *  actually responds to the relevant
+     *  methods. (If not, we'll crash
+     *  when calling them.)
+     */
+    
+    if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
+        [self setEdgesForExtendedLayout:UIRectEdgeNone];
+    }
+    
+    if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
+        [self setAutomaticallyAdjustsScrollViewInsets:NO];
+    }
     
     [self setTitle:NSLocalizedString(@"Calendar", @"A title for the calendar view.")];
     

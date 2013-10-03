@@ -266,7 +266,7 @@
     
     /* Set up the table */
     
-    CGRect tableFrame = [[self superview] frame];
+    CGRect tableFrame = [[self superview] bounds];
     tableFrame.size.height -= [self frame].size.height;
     tableFrame.origin.y += [self frame].size.height;
     
