@@ -64,6 +64,8 @@
 - (void)setMaximumDate:(NSDate *)maximumDate;
 - (void)setMaximumDate:(NSDate *)maximumDate animated:(BOOL)animated;
 
+- (void)setTableViewCellClass:(Class)tableViewCellClass;
+
 /* Visible Dates */
 
 - (NSDate *)firstVisibleDate;
