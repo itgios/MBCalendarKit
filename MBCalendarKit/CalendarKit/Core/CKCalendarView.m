@@ -108,8 +108,8 @@
 {
     if ([[self dataSource] respondsToSelector:@selector(calendarView:eventsForDate:)]) {
         NSArray *sortedArray = [[[self dataSource] calendarView:self eventsForDate:[self date]] sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            NSDate *d1 = [obj1 date];
-            NSDate *d2 = [obj2 date];
+            NSDate *d1 = [obj1 startDate];
+            NSDate *d2 = [obj2 startDate];
             
             return [d1 compare:d2];
         }];
@@ -651,6 +651,11 @@
     [self setDate:[self date] animated:animated];    
 }
 
+
+- (void)setTableViewCellClass:(Class)tableViewCellClass {
+    [_table registerClass:tableViewCellClass forCellReuseIdentifier:@"cell"];
+}
+
 #pragma mark - CKCalendarHeaderViewDataSource
 
 - (NSString *)titleForHeader:(CKCalendarHeaderView *)header
@@ -976,8 +981,8 @@
     CKCalendarEvent *event = [[self events] objectAtIndex:[indexPath row]];
     
     [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-    
-    [[cell textLabel] setText:[event title]];
+    cell.textLabel.text = event.startTime;
+    cell.detailTextLabel.text = event.title;
     
     return cell;
 }
