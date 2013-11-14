@@ -981,8 +981,12 @@
     CKCalendarEvent *event = [[self events] objectAtIndex:[indexPath row]];
     
     [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-    cell.textLabel.text = event.startTime;
-    cell.detailTextLabel.text = event.title;
+    if (cell.detailTextLabel){
+        cell.textLabel.text = event.startTime;
+        cell.detailTextLabel.text = event.title;
+    } else {
+        cell.textLabel.text = event.title;
+    }
     
     return cell;
 }
