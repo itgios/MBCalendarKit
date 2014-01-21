@@ -66,6 +66,7 @@
         
         //  Accessory Table
         _table = [UITableView new];
+        _table.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [_table setDelegate:self];
         [_table setDataSource:self];
         
