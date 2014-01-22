@@ -125,16 +125,16 @@
 
 #pragma mark - View Hierarchy
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
-{
-    [[self layer] setShadowColor:[[UIColor darkGrayColor] CGColor]];
-    [[self layer] setShadowOffset:CGSizeMake(0, 3)];
-    [[self layer] setShadowOpacity:1.0];
-    
-    [self reloadAnimated:NO];
-    
-    [super willMoveToSuperview:newSuperview];
-}
+//- (void)willMoveToSuperview:(UIView *)newSuperview
+//{
+//    [[self layer] setShadowColor:[[UIColor darkGrayColor] CGColor]];
+//    [[self layer] setShadowOffset:CGSizeMake(0, 3)];
+//    [[self layer] setShadowOpacity:1.0];
+//    
+//    [self reloadAnimated:NO];
+//    
+//    [super willMoveToSuperview:newSuperview];
+//}
 
 -(void)removeFromSuperview
 {
