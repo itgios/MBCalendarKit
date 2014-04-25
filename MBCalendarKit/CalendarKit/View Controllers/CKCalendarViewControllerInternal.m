@@ -78,6 +78,7 @@
     [[self modePicker] setSegmentedControlStyle:UISegmentedControlStyleBar];
     [[self modePicker] addTarget:self action:@selector(modeChangedUsingControl:)forControlEvents:UIControlEventValueChanged];
     [[self modePicker] setSelectedSegmentIndex:1];
+    [self modeChangedUsingControl:self.modePicker];
     
     /* Toolbar setup */
     
