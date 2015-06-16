@@ -11,269 +11,272 @@
 
 #import "UIView+Border.h"
 
-@interface CKCalendarCell (){
+@interface CKCalendarCell ()
+{
     CGSize _size;
 }
 
-@property (nonatomic, strong) UILabel *label;
-
-@property (nonatomic, strong) UIView *dot;
+@property ( nonatomic, strong ) UILabel* label;
+@property ( nonatomic, strong ) UIView* dot;
+@property ( nonatomic, strong ) UIView* backgroundCircle;
 
 @end
 
 @implementation CKCalendarCell
 
-- (id)init
+-(id)init
 {
-    self = [super init];
-    if (self) {
+    self = [ super init ];
+    
+    if ( self )
+    {
         // Initialization code
         _state = CKCalendarMonthCellStateNormal;
         
-        //  Normal Cell Colors
-        _normalBackgroundColor = kCalendarColorLightGray;
+        // Normal Cell Colors
+        _normalBackgroundColor = kCalendarColorWhite;
         _selectedBackgroundColor = kCalendarColorBlue;
         _inactiveSelectedBackgroundColor = kCalendarColorDarkGray;
         
-        //  Today Cell Colors
+        // Today Cell Colors
+        _todayTextColor = kCalendarColorWhite;
         _todayBackgroundColor = kCalendarColorBluishGray;
         _todaySelectedBackgroundColor = kCalendarColorBlue;
-        _todayTextShadowColor = kCalendarColorTodayShadowBlue;
-        _todayTextColor = [UIColor whiteColor];
+        _todayTextShadowColor = [ UIColor clearColor ];
         
-        //  Text Colors
+        // Text Colors
         _textColor = kCalendarColorDarkTextGradient;
-        _textShadowColor = [UIColor whiteColor];
-        _textSelectedColor = [UIColor whiteColor];
-        _textSelectedShadowColor = kCalendarColorSelectedShadowBlue;
+        _textSelectedColor = kCalendarColorWhite;
+        _textShadowColor = [ UIColor clearColor ];
+        _textSelectedShadowColor = [ UIColor clearColor ];
         
         _dotColor = kCalendarColorDarkTextGradient;
-        _selectedDotColor = [UIColor whiteColor];
+        _selectedDotColor = kCalendarColorWhite;
+        _cellBorderColor = [ UIColor clearColor ];
+        _selectedCellBorderColor = [ UIColor clearColor ];
         
-        _cellBorderColor = kCalendarColorCellBorder;
-        _selectedCellBorderColor = kCalendarColorSelectedCellBorder;
+        // Background circle
+        _backgroundCircle = [ UIView new ];
         
         // Label
-        _label = [UILabel new];
+        _label = [ UILabel new ];
         
-        //  Dot
-        _dot = [UIView new];
-        [_dot setHidden:YES];
+        // Dot
+        _dot = [ UIView new ];
+        _dot.hidden = YES;
         _showDot = NO;
     }
+    
     return self;
 }
 
-- (id)initWithSize:(CGSize)size
+-(id)initWithSize:( CGSize )size_
 {
-    self = [self init];
-    if (self) {
-        _size = size;
+    self = [ self init ];
+    
+    if (self)
+    {
+        _size = size_;
     }
+    
     return self;
 }
 
 #pragma mark - View Hierarchy
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
+-(void)willMoveToSuperview:( UIView* )new_superview_
 {
-    CGPoint origin = [self frame].origin;
-    [self setFrame:CGRectMake(origin.x, origin.y, _size.width, _size.height)];
-    [self layoutSubviews];
-    [self applyColors];
+    self.frame = CGRectMake( self.frame.origin.x, self.frame.origin.y, _size.width, _size.height );
+    [ self layoutSubviews ];
+    [ self applyColors ];
 }
 
 #pragma mark - Layout
 
-- (void)layoutSubviews
+-(void)layoutSubviews
 {
-    [self configureLabel];
-    [self configureDot];
+    [ self configureLabel ];
+    [ self configureDot ];
+    [ self configureBackgroundCircle ];
     
-    [self addSubview:[self label]];
-    [self addSubview:[self dot]];
+    if ( ![ self.subviews containsObject: self.backgroundCircle ] ) [ self addSubview: self.backgroundCircle ];
+    if ( ![ self.subviews containsObject: self.label ] ) [ self addSubview: self.label ];
+    if ( ![ self.subviews containsObject: self.dot ] ) [ self addSubview: self.dot ];
 }
 
 #pragma mark - Setters
 
-- (void)setState:(CKCalendarMonthCellState)state
+-(void)setState:( CKCalendarMonthCellState )state_
 {
-    if (state > CKCalendarMonthCellStateOutOfRange || state < CKCalendarMonthCellStateTodaySelected) {
-        return;
+    if ( state_ >= CKCalendarMonthCellStateTodaySelected && state_ <= CKCalendarMonthCellStateOutOfRange )
+    {
+        _state = state_;
+        [ self applyColorsForState: _state ];
     }
-    
-    _state = state;
-    
-    [self applyColorsForState:_state];
 }
 
-- (void)setNumber:(NSNumber *)number
+-(void)setNumber:( NSNumber* )number_
 {
-    _number = number;
+    _number = number_;
     
-    //  TODO: Locale support?
-    NSString *stringVal = [number stringValue];
-    [[self label] setText:stringVal];
+    // TODO: Locale support?
+    self.label.text = number_.stringValue;
 }
 
-- (void)setShowDot:(BOOL)showDot
+-(void)setShowDot:( BOOL )show_dot_
 {
-    _showDot = showDot;
-    [[self dot] setHidden:!showDot];
+    _showDot = show_dot_;
+    self.dot.hidden = !_showDot;
 }
 
 #pragma mark - Recycling Behavior
 
 -(void)prepareForReuse
 {
-    //  Alpha, by default, is 1.0
-    [[self label]setAlpha:1.0];
+    // Alpha, by default, is 1.0
+    self.label.alpha = 1.f;
+    self.state = CKCalendarMonthCellStateNormal;
     
-    [self setState:CKCalendarMonthCellStateNormal];
-    
-    [self applyColors];
+    [ self applyColors ];
 }
 
-#pragma mark - Label 
+#pragma mark - Label
 
-- (void)configureLabel
+-(void)configureLabel
 {
-    UILabel *label = [self label];
-    
-    [label setFont:[UIFont boldSystemFontOfSize:13]];
-    [label setTextAlignment:NSTextAlignmentCenter];
-    
-    [label setBackgroundColor:[UIColor clearColor]];
-    [label setFrame:CGRectMake(0, 0, [self frame].size.width, [self frame].size.height)];
+    self.label.font = [ UIFont boldSystemFontOfSize: 13.f ];
+    self.label.textAlignment = NSTextAlignmentCenter;
+    self.label.backgroundColor = [ UIColor clearColor ];
+    self.label.frame = CGRectMake( 0.f, 0.f, self.frame.size.width, self.frame.size.height );
 }
 
 #pragma mark - Dot
 
 - (void)configureDot
 {
-    UIView *dot = [self dot];
+    CGFloat dot_radius_ = 3.f;
+    CGFloat self_height_ = self.frame.size.height;
+    CGFloat self_width_ = self.frame.size.width;
     
-    CGFloat dotRadius = 3;
-    CGFloat selfHeight = [self frame].size.height;
-    CGFloat selfWidth = [self frame].size.width;
+    self.dot.layer.cornerRadius = dot_radius_ / 2;
+    self.dot.frame = CGRectMake( self_width_ / 2 - dot_radius_ / 2, ( self_height_ - ( self_height_ / 5 ) ) - dot_radius_ / 2, dot_radius_, dot_radius_ );
+}
+
+#pragma mark - BackgroundCircle
+
+-(void)configureBackgroundCircle
+{
+    CGFloat height_ = MIN( self.frame.size.width, self.frame.size.height );
+    CGFloat radius_ = ( height_ / 2 ) - 4.f;
     
-    [[dot layer] setCornerRadius:dotRadius/2];
-    
-    CGRect dotFrame = CGRectMake(selfWidth/2 - dotRadius/2, (selfHeight - (selfHeight/5)) - dotRadius/2, dotRadius, dotRadius);
-    [[self dot] setFrame:dotFrame];
-    
+    self.backgroundCircle.layer.cornerRadius = radius_;
+    self.backgroundCircle.frame = CGRectMake( ( self.frame.size.width / 2 ) - radius_, ( self.frame.size.height / 2 ) - radius_, radius_ * 2, radius_ * 2 );
 }
 
 #pragma mark - UI Coloring
 
-- (void)applyColors
-{    
-    [self applyColorsForState:[self state]];
-    [self showBorder];
+-(void)applyColors
+{
+    [ self applyColorsForState: self.state ];
+    [ self showBorder ];
 }
 
-//  TODO: Make the cell states bitwise, so we can use masks and clean this up a bit
-- (void)applyColorsForState:(CKCalendarMonthCellState)state
+// TODO: Make the cell states bitwise, so we can use masks and clean this up a bit
+- (void)applyColorsForState:( CKCalendarMonthCellState )state_
 {
-    //  Default colors and shadows
-    [[self label] setTextColor:[self textColor]];
-    [[self label] setShadowColor:[self textShadowColor]];
-    [[self label] setShadowOffset:CGSizeMake(0, 0.5)];
+    // Default colors and shadows
+    self.label.textColor = self.textColor;
+    self.label.shadowColor = self.textShadowColor;
+    self.label.shadowOffset = CGSizeMake( 0.f, 0.5f );
     
-    [self setBorderColor:[self cellBorderColor]];
-    [self setBorderWidth:0.5];
-    [self setBackgroundColor:[self normalBackgroundColor]];
+    self.backgroundColor = self.normalBackgroundColor;
+    self.backgroundCircle.backgroundColor = self.normalBackgroundColor;
     
-    //  Today cell
-    if(state == CKCalendarMonthCellStateTodaySelected)
+    [ self setBorderColor: self.backgroundColor ];
+    [ self setBorderWidth: 0.5f ];
+    
+    // Today cell
+    if( state_ == CKCalendarMonthCellStateTodaySelected )
     {
-        [self setBackgroundColor:[self todaySelectedBackgroundColor]];
-        [[self label] setShadowColor:[self todayTextShadowColor]];
-        [[self label] setTextColor:[self todayTextColor]];
-        [self setBorderColor:[self backgroundColor]];
+        self.backgroundCircle.backgroundColor = self.todaySelectedBackgroundColor;
+        self.label.shadowColor = self.todayTextShadowColor;
+        self.label.textColor = self.todayTextColor;
     }
-    
-    //  Today cell, selected
-    else if(state == CKCalendarMonthCellStateTodayDeselected)
+    // Today cell, selected
+    else if( state_ == CKCalendarMonthCellStateTodayDeselected )
     {
-        [self setBackgroundColor:[self todayBackgroundColor]];
-        [[self label] setShadowColor:[self todayTextShadowColor]];
-        [[self label] setTextColor:[self todayTextColor]];
-        [self setBorderColor:[self backgroundColor]];
-        [self showBorder];
+        self.backgroundCircle.backgroundColor = self.todayBackgroundColor;
+        self.label.shadowColor = self.todayTextShadowColor;
+        self.label.textColor = self.todayTextColor;
     }
-    
     //  Selected cells in the active month have a special background color
-    else if(state == CKCalendarMonthCellStateSelected)
+    else if( state_ == CKCalendarMonthCellStateSelected )
     {
-        [self setBackgroundColor:[self selectedBackgroundColor]];
-        [self setBorderColor:[self selectedCellBorderColor]];
-        [[self label] setTextColor:[self textSelectedColor]];
-        [[self label] setShadowColor:[self textSelectedShadowColor]];
-        [[self label] setShadowOffset:CGSizeMake(0, -0.5)];
+        self.backgroundCircle.backgroundColor = self.selectedBackgroundColor;
+        self.label.textColor = self.textSelectedColor;
+        self.label.shadowColor = self.textSelectedShadowColor;
+        self.label.shadowOffset = CGSizeMake( 0.f, -0.5f );
     }
     
-    if (state == CKCalendarMonthCellStateInactive) {
-        [[self label] setAlpha:0.5];    //  Label alpha needs to be lowered
-        [[self label] setShadowOffset:CGSizeZero];
-    }
-    else if (state == CKCalendarMonthCellStateInactiveSelected)
+    if ( state_ == CKCalendarMonthCellStateInactive )
     {
-        [[self label] setAlpha:0.5];    //  Label alpha needs to be lowered
-        [[self label] setShadowOffset:CGSizeZero];
-        [self setBackgroundColor:[self inactiveSelectedBackgroundColor]];
+        self.label.alpha = 0.5f;    //  Label alpha needs to be lowered
+        self.label.shadowOffset = CGSizeZero;
     }
-    else if(state == CKCalendarMonthCellStateOutOfRange)
+    else if ( state_ == CKCalendarMonthCellStateInactiveSelected )
     {
-        [[self label] setAlpha:0.01];    //  Label alpha needs to be lowered
-        [[self label] setShadowOffset:CGSizeZero];
+        self.label.alpha = 0.5f;    //  Label alpha needs to be lowered
+        self.label.shadowOffset = CGSizeZero;
+        self.backgroundCircle.backgroundColor = self.inactiveSelectedBackgroundColor;
+    }
+    else if( state_ == CKCalendarMonthCellStateOutOfRange )
+    {
+        self.label.alpha = 0.01f;   //  Label alpha needs to be lowered
+        self.label.shadowOffset = CGSizeZero;
     }
     
-    //  Make the dot follow the label's style
-    [[self dot] setBackgroundColor:[[self label] textColor]];
-    [[self dot] setAlpha:[[self label] alpha]];
+    // Make the dot follow the label's style
+    self.dot.backgroundColor = self.label.textColor;
+    self.dot.alpha = self.label.alpha;
 }
 
 #pragma mark - Selection State
 
-- (void)setSelected
+-(void)setSelected
 {
-    
-    CKCalendarMonthCellState state = [self state];
-    
-    if (state == CKCalendarMonthCellStateInactive) {
-        [self setState:CKCalendarMonthCellStateInactiveSelected];
-    }
-    else if(state == CKCalendarMonthCellStateNormal)
+    if ( self.state == CKCalendarMonthCellStateInactive )
     {
-        [self setState:CKCalendarMonthCellStateSelected];
+        self.state = CKCalendarMonthCellStateInactiveSelected;
     }
-    else if(state == CKCalendarMonthCellStateTodayDeselected)
+    else if ( self.state == CKCalendarMonthCellStateNormal )
     {
-        [self setState:CKCalendarMonthCellStateTodaySelected];
+        self.state = CKCalendarMonthCellStateSelected;
+    }
+    else if ( self.state == CKCalendarMonthCellStateTodayDeselected )
+    {
+        self.state = CKCalendarMonthCellStateTodaySelected;
     }
 }
 
-- (void)setDeselected
+-(void)setDeselected
 {
-    CKCalendarMonthCellState state = [self state];
-    
-    if (state == CKCalendarMonthCellStateInactiveSelected) {
-        [self setState:CKCalendarMonthCellStateInactive];
-    }
-    else if(state == CKCalendarMonthCellStateSelected)
+    if ( self.state == CKCalendarMonthCellStateInactiveSelected )
     {
-        [self setState:CKCalendarMonthCellStateNormal];
+        self.state = CKCalendarMonthCellStateInactive;
     }
-    else if(state == CKCalendarMonthCellStateTodaySelected)
+    else if ( self.state == CKCalendarMonthCellStateSelected )
     {
-        [self setState:CKCalendarMonthCellStateTodayDeselected];
+        self.state = CKCalendarMonthCellStateNormal;
+    }
+    else if ( self.state == CKCalendarMonthCellStateTodaySelected )
+    {
+        self.state = CKCalendarMonthCellStateTodayDeselected;
     }
 }
 
-- (void)setOutOfRange
+-(void)setOutOfRange
 {
-    [self setState:CKCalendarMonthCellStateOutOfRange];
+    self.state = CKCalendarMonthCellStateOutOfRange;
 }
 
 @end

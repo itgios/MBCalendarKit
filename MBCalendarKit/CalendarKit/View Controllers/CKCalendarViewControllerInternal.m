@@ -101,7 +101,7 @@
 
 - (void)modeChangedUsingControl:(id)sender
 {
-    [[self calendarView] setDisplayMode:[[self modePicker] selectedSegmentIndex]];
+    [[self calendarView] setDisplayMode:(int)[[self modePicker] selectedSegmentIndex]];
 
 }
 

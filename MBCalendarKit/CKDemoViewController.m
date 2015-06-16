@@ -12,7 +12,7 @@
 
 #import "NSDate+Components.h"
 
-@interface CKDemoViewController () <CKCalendarViewDelegate, CKCalendarViewDataSource>
+@interface CKDemoViewController () <CKCalendarViewDelegate, CKCalendarViewDataSource, UINavigationControllerDelegate>
     @property (nonatomic, strong) NSMutableDictionary *data;
 @end
 

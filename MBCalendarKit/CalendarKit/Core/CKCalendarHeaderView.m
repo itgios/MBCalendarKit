@@ -30,6 +30,8 @@
 @property (nonatomic, strong) MBPolygonView *forwardButton;
 @property (nonatomic, strong) MBPolygonView *backwardButton;
 
+@property (nonatomic, strong) UIView* bottomSeparator;
+
 @end
 
 @implementation CKCalendarHeaderView
@@ -41,7 +43,7 @@
         
         _monthTitle = [UILabel new];
         [_monthTitle setTextColor:kCalendarColorHeaderMonth];
-        [_monthTitle setShadowColor:kCalendarColorHeaderMonthShadow];
+        [_monthTitle setShadowColor:[UIColor clearColor]/*kCalendarColorHeaderMonthShadow*/];
         [_monthTitle setShadowOffset:CGSizeMake(0, 1)];
         [_monthTitle setBackgroundColor:[UIColor clearColor]];
         [_monthTitle setTextAlignment:NSTextAlignmentCenter];
@@ -63,7 +65,7 @@
 {
     [self layoutSubviews];
     [super willMoveToSuperview:newSuperview];
-    [self setBackgroundColor:kCalendarColorHeaderGradientDark];
+    [self setBackgroundColor:[ UIColor colorWithWhite: 0.95f alpha: 1.f ]/*kCalendarColorHeaderGradientDark*/];
 }
 
 - (void)layoutSubviews
@@ -72,7 +74,7 @@
     /* Show & position the title Label */
     
     CGFloat upperRegionHeight = [self frame].size.height - _columnTitleHeight;
-    CGFloat titleLabelHeight = 27;
+    CGFloat titleLabelHeight = 25;
     
     if ([[self dataSource] numberOfColumnsForHeader:self] == 0) {
         titleLabelHeight = [self frame].size.height;
@@ -91,7 +93,7 @@
     [[self monthTitle] setText:title];
     
     /* Highlight the title color as appropriate */
-
+    
     if ([self shouldHighlightTitle])
     {
         [[self monthTitle] setTextColor:kCalendarColorHeaderTitleHighlightedBlue];
@@ -102,9 +104,9 @@
     }
     
     /* Show the forward and back buttons */
-
-        CGRect backFrame = CGRectMake(yOffset, yOffset, titleLabelHeight, titleLabelHeight);
-        CGRect forwardFrame = CGRectMake([self frame].size.width-titleLabelHeight-yOffset, yOffset, titleLabelHeight, titleLabelHeight);
+    
+    CGRect backFrame = CGRectMake(yOffset, yOffset, titleLabelHeight, titleLabelHeight);
+    CGRect forwardFrame = CGRectMake([self frame].size.width-titleLabelHeight-yOffset, yOffset, titleLabelHeight, titleLabelHeight);
     
     if ([self forwardButton]) {
         [[self forwardButton] removeFromSuperview];
@@ -167,12 +169,23 @@
             UILabel *label = [self _columnLabelWithTitle:title];
             [[self columnLabels] addObject:label];
             
-            CGRect frame = CGRectMake(i*labelWidth, [self frame].size.height-labelHeight, labelWidth, labelHeight);
+            CGRect frame = CGRectMake(i*labelWidth, [self frame].size.height-labelHeight - 3, labelWidth, labelHeight);
             [label setFrame:frame];
             
             [self addSubview:label];
         }
     }
+    
+    if ( self.bottomSeparator )
+    {
+        [ self.bottomSeparator removeFromSuperview ];
+        self.bottomSeparator = nil;
+    }
+    
+    self.bottomSeparator = [ [ UIView alloc ] initWithFrame: CGRectMake( 0, self.frame.size.height - 1.f, self.frame.size.width, 1.f ) ];
+    self.bottomSeparator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+    self.bottomSeparator.backgroundColor = [ UIColor lightGrayColor ];
+    [ self addSubview: self.bottomSeparator ];
 }
 
 #pragma mark - Convenience Methods
@@ -184,7 +197,7 @@
     UILabel *l = [UILabel new];
     [l setBackgroundColor:[UIColor clearColor]];
     [l setTextColor:kCalendarColorHeaderWeekdayTitle];
-    [l setShadowColor:kCalendarColorHeaderWeekdayShadow];
+    [l setShadowColor:[UIColor clearColor]/*kCalendarColorHeaderWeekdayShadow*/];
     [l setTextAlignment:NSTextAlignmentCenter];
     [l setFont:[UIFont boldSystemFontOfSize:10]];
     [l setShadowOffset:CGSizeMake(0, 1)];

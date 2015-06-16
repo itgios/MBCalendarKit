@@ -18,6 +18,8 @@
 
 @implementation CKCalendarViewController
 
+@synthesize delegate;
+
 - (id)init
 {
     CKCalendarViewControllerInternal *calendarViewController = [CKCalendarViewControllerInternal new];

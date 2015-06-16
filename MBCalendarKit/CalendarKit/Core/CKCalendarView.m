@@ -26,6 +26,7 @@
 @property (nonatomic, strong) NSDateFormatter *formatter;
 
 @property (nonatomic, strong) CKCalendarHeaderView *headerView;
+@property (nonatomic, strong) UIView* bottomSeparator;
 
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) NSArray *events;
@@ -130,9 +131,9 @@
 //    [[self layer] setShadowColor:[[UIColor darkGrayColor] CGColor]];
 //    [[self layer] setShadowOffset:CGSizeMake(0, 3)];
 //    [[self layer] setShadowOpacity:1.0];
-//    
+//
 //    [self reloadAnimated:NO];
-//    
+//
 //    [super willMoveToSuperview:newSuperview];
 //}
 
@@ -161,7 +162,7 @@
     
     if (animated) {
         [UIView animateWithDuration:0.4 animations:^{
-            [super setFrame:frame];    
+            [super setFrame:frame];
         }];
     }
     else
@@ -223,8 +224,8 @@
 
 - (CGSize)_cellSize
 {
-    // These values must be hard coded in order for rectForDisplayMode: to work correctly
-    return CGSizeMake(46, 44);
+    CGFloat parent_width_ = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 320.f : [ [ [ UIApplication sharedApplication ] keyWindow ] bounds ].size.width;
+    return CGSizeMake( MAX( parent_width_ / 7, 44.f ), 44.f );
 }
 
 #pragma mark - Layout
@@ -264,6 +265,18 @@
     /* Show the cells */
     
     [self _layoutCellsAnimated:animated];
+    
+    if ( self.bottomSeparator )
+    {
+        [ self.bottomSeparator removeFromSuperview ];
+        self.bottomSeparator = nil;
+    }
+    
+    self.bottomSeparator = [ [ UIView alloc ] initWithFrame: CGRectMake( 0, self.wrapper.frame.size.height - 1.f, self.wrapper.frame.size.width, 1.f ) ];
+    self.bottomSeparator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+    self.bottomSeparator.backgroundColor = [ UIColor lightGrayColor ];
+    [ self.wrapper addSubview: self.bottomSeparator ];
+    [ self.wrapper bringSubviewToFront: self.bottomSeparator ];
     
     /* Set up the table */
     
@@ -440,7 +453,7 @@
         [self _moveCellsIntoView:cellsBeingAnimatedIntoView andCellsOutOfView:cellsToRemoveAfterAnimation usingOffset:yOffset];
         [self _cleanupCells:cellsToRemoveAfterAnimation];
         [cellsBeingAnimatedIntoView removeAllObjects];
-        [self setIsAnimating:NO];        
+        [self setIsAnimating:NO];
     }
     
     
@@ -649,7 +662,7 @@
 - (void)setMaximumDate:(NSDate *)maximumDate animated:(BOOL)animated
 {
     _maximumDate = maximumDate;
-    [self setDate:[self date] animated:animated];    
+    [self setDate:[self date] animated:animated];
 }
 
 
@@ -735,7 +748,7 @@
     {
         return [[self calendar] date:[self date] isSameWeekAs:[self minimumDate]];
     }
-
+    
     return [[self calendar] date:[self date] isSameDayAs:[self minimumDate]];
 }
 
@@ -767,7 +780,7 @@
 {
     NSDate *date = [self date];
     NSDate *today = [NSDate date];
-
+    
     /* If the cells are animating, don't do anything or we'll break the view */
     
     if ([self isAnimating]) {
@@ -1127,7 +1140,7 @@
     {
         return [[self calendar]date:date isBeforeDate:[self maximumDate]];
     }
-
+    
     //  If there's no maximum, treat all dates that are before
     //  the minimum as valid
     else if(![self maximumDate])
@@ -1182,7 +1195,7 @@
                 index = [cell index];
                 break;
             }
-
+            
         }
         
         //  Clip the index to minimum and maximum dates
@@ -1195,7 +1208,7 @@
         {
             index = [self _indexFromDate:[self minimumDate]];
         }
-
+        
         // Save the new index
         [self setSelectedIndex:index];
         
