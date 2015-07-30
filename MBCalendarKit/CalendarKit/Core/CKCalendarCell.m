@@ -11,6 +11,9 @@
 
 #import "UIView+Border.h"
 
+static UIColor* customSelectedCellColor;
+static UIColor* customTodayCellColor;
+
 @interface CKCalendarCell ()
 {
     CGSize _size;
@@ -24,6 +27,16 @@
 
 @implementation CKCalendarCell
 
++(void)setSelectedCellColor:( UIColor* )color_
+{
+    customSelectedCellColor = color_;
+}
+
++(void)setTodayCellColor:( UIColor* )color_
+{
+    customTodayCellColor = color_;
+}
+
 -(id)init
 {
     self = [ super init ];
@@ -35,13 +48,13 @@
         
         // Normal Cell Colors
         _normalBackgroundColor = kCalendarColorWhite;
-        _selectedBackgroundColor = kCalendarColorBlue;
+        _selectedBackgroundColor = customSelectedCellColor ? customSelectedCellColor : kCalendarColorBlue;
         _inactiveSelectedBackgroundColor = kCalendarColorDarkGray;
         
         // Today Cell Colors
         _todayTextColor = kCalendarColorWhite;
-        _todayBackgroundColor = kCalendarColorBluishGray;
-        _todaySelectedBackgroundColor = kCalendarColorBlue;
+        _todayBackgroundColor = customTodayCellColor ? customTodayCellColor : kCalendarColorBluishGray;
+        _todaySelectedBackgroundColor = customSelectedCellColor ? customSelectedCellColor : kCalendarColorBlue;
         _todayTextShadowColor = [ UIColor clearColor ];
         
         // Text Colors

@@ -56,4 +56,7 @@
 - (void)setDeselected;  //  Deselect the cell
 - (void)setOutOfRange;  //  Deselect and style to show that the cell isn't selectable
 
++(void)setSelectedCellColor:( UIColor* )color_;
++(void)setTodayCellColor:( UIColor* )color_;
+
 @end
