@@ -85,7 +85,7 @@
     UIBarButtonItem *todayButton = [[UIBarButtonItem alloc] initWithTitle:todayTitle style:UIBarButtonItemStyleBordered target:self action:@selector(todayButtonTapped:)];
     
     [[self navigationItem] setTitleView:[self modePicker]];
-    [[self navigationItem] setLeftBarButtonItems: [self.navigationItem.leftBarButtonItems arrayByAddingObject: todayButton]];
+    [[self navigationItem] setLeftBarButtonItems: [ self.navigationItem.leftBarButtonItems arrayByAddingObject: todayButton ] ];
 
 }
 
