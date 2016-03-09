@@ -168,7 +168,7 @@
 		46BFBCC21715FB3F00D4733E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		46BFBCC41715FB3F00D4733E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		46BFBCC61715FB3F00D4733E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		46BFBCE51715FB3F00D4733E /* MBCalendarKitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MBCalendarKitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		46BFBCE51715FB3F00D4733E /* MBCalendarKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MBCalendarKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,7 +369,7 @@
 			isa = PBXGroup;
 			children = (
 				46BFBCBF1715FB3F00D4733E /* MBCalendarKit.app */,
-				46BFBCE51715FB3F00D4733E /* MBCalendarKitTests.octest */,
+				46BFBCE51715FB3F00D4733E /* MBCalendarKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -435,7 +435,7 @@
 			);
 			name = MBCalendarKitTests;
 			productName = MBChocolateCakeTests;
-			productReference = 46BFBCE51715FB3F00D4733E /* MBCalendarKitTests.octest */;
+			productReference = 46BFBCE51715FB3F00D4733E /* MBCalendarKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
