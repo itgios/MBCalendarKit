@@ -272,9 +272,9 @@
         self.bottomSeparator = nil;
     }
     
-    self.bottomSeparator = [ [ UIView alloc ] initWithFrame: CGRectMake( 0, self.wrapper.frame.size.height - 1.f, self.wrapper.frame.size.width, 1.f ) ];
+    self.bottomSeparator = [ [ UIView alloc ] initWithFrame: CGRectMake( 0.f , self.wrapper.frame.size.height - 1.f, self.wrapper.frame.size.width, 1.f / [ [ UIScreen mainScreen ] scale ] ) ];
     self.bottomSeparator.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.bottomSeparator.backgroundColor = [ UIColor lightGrayColor ];
+    self.bottomSeparator.backgroundColor = [ UIColor colorWithRed: 200.f /255.f green:199.f /255.f blue: 204.f / 255.f alpha: 1.f ];
     [ self.wrapper addSubview: self.bottomSeparator ];
     [ self.wrapper bringSubviewToFront: self.bottomSeparator ];
     
