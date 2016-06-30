@@ -981,7 +981,7 @@
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         
         if ([indexPath row] == 1) {
-            [[cell textLabel] setText:NSLocalizedString(@"No Events", @"A label for a table with no events.")];
+            [[cell textLabel] setText: self.dataLoaded ? NSLocalizedString(@"No Events", nil) : NSLocalizedString(@"Loading...", nil)];
         }
         else
         {
