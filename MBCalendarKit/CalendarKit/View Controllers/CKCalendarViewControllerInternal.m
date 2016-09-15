@@ -67,7 +67,7 @@
     [[self calendarView] setDelegate:self];
     [[self view] addSubview:[self calendarView]];
 
-    [[self calendarView] setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] animated:NO];
+    [[self calendarView] setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] animated:NO];
     [[self calendarView] setDisplayMode:CKCalendarViewModeMonth animated:NO];
     
     /* Mode Picker */
@@ -82,7 +82,7 @@
     /* Toolbar setup */
     
     NSString *todayTitle = NSLocalizedString(@"Today", @"A button which sets the calendar to today.");
-    UIBarButtonItem *todayButton = [[UIBarButtonItem alloc] initWithTitle:todayTitle style:UIBarButtonItemStyleBordered target:self action:@selector(todayButtonTapped:)];
+    UIBarButtonItem *todayButton = [[UIBarButtonItem alloc] initWithTitle:todayTitle style:UIBarButtonItemStylePlain target:self action:@selector(todayButtonTapped:)];
     
     [[self navigationItem] setTitleView:[self modePicker]];
     [[self navigationItem] setLeftBarButtonItems: ( self.navigationItem.leftBarButtonItems ? [ self.navigationItem.leftBarButtonItems arrayByAddingObject: todayButton ] : @[ todayButton ] ) ];
