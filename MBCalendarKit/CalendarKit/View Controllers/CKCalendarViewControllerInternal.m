@@ -26,67 +26,56 @@
 
 @implementation CKCalendarViewControllerInternal 
 
-- (void)viewDidLoad
+-(void)viewDidLoad
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-
-    /*  In iOS 7, UIKit will automatically
-     *  put content beneath navigation bars.
-     *  It also tries to pad scroll views
-     *  and table views to make them
-     *  scroll nicely beneath them.
-     *
-     *  These two checks will fix them.
-     *
-     *  For iOS 6 compatibility, we need to
-     *  check if the view controller class
-     *  actually responds to the relevant
-     *  methods. (If not, we'll crash
-     *  when calling them.)
-     */
+    [ super viewDidLoad ];
     
-    if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
-        [self setEdgesForExtendedLayout:UIRectEdgeNone];
+    if ( [ self respondsToSelector: @selector( setEdgesForExtendedLayout: ) ] )
+    {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
-    if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
-        [self setAutomaticallyAdjustsScrollViewInsets:NO];
+    if ( [ self respondsToSelector: @selector( setAutomaticallyAdjustsScrollViewInsets: ) ] )
+    {
+        self.automaticallyAdjustsScrollViewInsets = NO;
     }
     
-    [self setTitle:NSLocalizedString(@"Calendar", @"A title for the calendar view.")];
+    self.title = NSLocalizedString( @"Calendar", nil );
+    self.events = [ NSMutableArray new ];
     
-    /* Prepare the events array */
+    CGFloat top_view_height_ = 40.f;
     
-    [self setEvents:[NSMutableArray new]];
+    UIView* top_view_ = [ [ UIView alloc ] initWithFrame: CGRectMake( 0.f, 0.f, self.view.frame.size.width, top_view_height_ ) ];
+    top_view_.backgroundColor = [ UIColor whiteColor ];
+    top_view_.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
-    /* Calendar View */
-
-    [self setCalendarView:[CKCalendarView new]];
-    [[self calendarView] setDataSource:self];
-    [[self calendarView] setDelegate:self];
-    [[self view] addSubview:[self calendarView]];
-
-    [[self calendarView] setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] animated:NO];
-    [[self calendarView] setDisplayMode:CKCalendarViewModeMonth animated:NO];
+    UIView* bottom_view_ = [ [ UIView alloc ] initWithFrame: CGRectMake( 0.f, top_view_height_, self.view.frame.size.width, self.view.frame.size.height - top_view_height_ ) ];
+    bottom_view_.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    /* Mode Picker */
+    [ self.view addSubview: top_view_ ];
+    [ self.view addSubview: bottom_view_ ];
     
-    NSArray *items = @[NSLocalizedString(@"Month", @"A title for the month view button."), NSLocalizedString(@"Week",@"A title for the week view button."), NSLocalizedString(@"Day", @"A title for the day view button.")];
+    self.calendarView = [ CKCalendarView new ];
+    self.calendarView.dataSource = self;
+    self.calendarView.delegate = self;
+    [ bottom_view_ addSubview: self.calendarView ];
+    [ self.calendarView setCalendar: [ [ NSCalendar alloc ] initWithCalendarIdentifier: NSCalendarIdentifierGregorian ] animated: NO ];
+    [ self.calendarView setDisplayMode: CKCalendarViewModeMonth animated: NO ];
     
-    [self setModePicker:[[UISegmentedControl alloc] initWithItems:items]];
-    [[self modePicker] addTarget:self action:@selector(modeChangedUsingControl:)forControlEvents:UIControlEventValueChanged];
-    [[self modePicker] setSelectedSegmentIndex:1];
-    [self modeChangedUsingControl:self.modePicker];
+    self.modePicker = [ [ UISegmentedControl alloc ] initWithItems: @[ NSLocalizedString(@"Month", nil ), NSLocalizedString( @"Week", nil ), NSLocalizedString( @"Day", nil ) ] ];
+    self.modePicker.frame = CGRectMake( 5.f, 10.f, top_view_.frame.size.width - 10.f, self.modePicker.frame.size.height );
+    self.modePicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [ self.modePicker addTarget: self action: @selector( modeChangedUsingControl: ) forControlEvents: UIControlEventValueChanged ];
+    [ self.modePicker setSelectedSegmentIndex: 1 ];
+    [ self modeChangedUsingControl: self.modePicker ];
+    [ top_view_ addSubview: self.modePicker ];
     
-    /* Toolbar setup */
+    UIBarButtonItem* today_button_ = [ [ UIBarButtonItem alloc ] initWithTitle: NSLocalizedString( @"Today", nil )
+                                                                         style: UIBarButtonItemStylePlain
+                                                                        target: self
+                                                                        action: @selector( todayButtonTapped: ) ];
     
-    NSString *todayTitle = NSLocalizedString(@"Today", @"A button which sets the calendar to today.");
-    UIBarButtonItem *todayButton = [[UIBarButtonItem alloc] initWithTitle:todayTitle style:UIBarButtonItemStylePlain target:self action:@selector(todayButtonTapped:)];
-    
-    [[self navigationItem] setTitleView:[self modePicker]];
-    [[self navigationItem] setLeftBarButtonItems: ( self.navigationItem.leftBarButtonItems ? [ self.navigationItem.leftBarButtonItems arrayByAddingObject: todayButton ] : @[ todayButton ] ) ];
-
+    self.navigationItem.leftBarButtonItems = ( self.navigationItem.leftBarButtonItems ? [ self.navigationItem.leftBarButtonItems arrayByAddingObject: today_button_ ] : @[ today_button_ ] );
 }
 
 - (void)didReceiveMemoryWarning

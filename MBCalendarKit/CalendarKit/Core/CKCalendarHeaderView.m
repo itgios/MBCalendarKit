@@ -65,7 +65,7 @@
 {
     [self layoutSubviews];
     [super willMoveToSuperview:newSuperview];
-    [self setBackgroundColor:[ UIColor colorWithWhite: 0.95f alpha: 1.f ]/*kCalendarColorHeaderGradientDark*/];
+    [self setBackgroundColor:[ UIColor colorWithWhite: 1.f alpha: 1.f ]/*kCalendarColorHeaderGradientDark*/];
 }
 
 - (void)layoutSubviews

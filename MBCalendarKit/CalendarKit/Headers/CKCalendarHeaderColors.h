@@ -20,6 +20,6 @@
 #define kCalendarColorHeaderGradientLight   [@"#f4f4f5" toColor]
 #define kCalendarColorHeaderGradientDark    [@"#ccccd1" toColor]
 
-#define kCalendarColorHeaderTitleHighlightedBlue [@"#1980e5" toColor]
+#define kCalendarColorHeaderTitleHighlightedBlue [@"#0b5cbb" toColor]
 
 #endif
