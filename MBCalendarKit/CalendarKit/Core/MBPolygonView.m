@@ -7,13 +7,12 @@
 //
 
 #import "MBPolygonView.h"
-#import "Math.h"
 #import "CKCalendarHeaderColors.h"
 
 @interface MBPolygonView ()
-    @property NSInteger numberOfSides;
-    @property CGFloat scalingFactor;
-    @property CGFloat rotation;
+@property NSInteger numberOfSides;
+@property CGFloat scalingFactor;
+@property CGFloat rotation;
 @end
 
 @implementation MBPolygonView
@@ -88,7 +87,7 @@ float degToRad(float deg){
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     //  Clear the background
-     CGContextClearRect(context, self.frame);
+    CGContextClearRect(context, self.frame);
     
     //Save the state of the context
     CGContextSaveGState(context);
@@ -137,12 +136,12 @@ float degToRad(float deg){
     }
     
     //  Render it all out
-
+    
     CGContextFillPath(context);
     
     //Grab an image from the context
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-
+    
     //Restore the state
     CGContextRestoreGState(context);
     

@@ -1024,6 +1024,23 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
+-(UITableViewCellEditingStyle)tableView:( UITableView* )table_view_ editingStyleForRowAtIndexPath:( NSIndexPath* )index_path_
+{
+    return self.events.count > 0 && [ self.dataSource respondsToSelector: @selector( calendarView:actionsForEvent: ) ] ? UITableViewCellEditingStyleDelete : UITableViewCellEditingStyleNone;
+}
+
+-(NSArray*)tableView:( UITableView* )table_view_ editActionsForRowAtIndexPath:( NSIndexPath* )index_path_
+{
+    if ( self.events.count > 0 && [ self.dataSource respondsToSelector: @selector( calendarView:actionsForEvent: ) ] )
+    {
+        return [ self.dataSource calendarView: self actionsForEvent: [ self.events objectAtIndex: index_path_.row ] ];
+    }
+    else
+    {
+        return nil;
+    }
+}
+
 #pragma mark - Date Calculations
 
 - (NSDate *)firstVisibleDate

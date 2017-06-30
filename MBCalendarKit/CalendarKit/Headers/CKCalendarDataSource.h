@@ -10,10 +10,14 @@
 #define MBCalendarKit_CKCalendarDataSource_h
 
 @class CKCalendarView;
+@class CKCalendarEvent;
 
 @protocol CKCalendarViewDataSource <NSObject>
 
 - (NSArray *)calendarView:(CKCalendarView *)calendarView eventsForDate:(NSDate *)date;
+
+@optional
+- (NSArray *)calendarView:(CKCalendarView *)calendarView actionsForEvent:(CKCalendarEvent *)event;
 
 @end
 
