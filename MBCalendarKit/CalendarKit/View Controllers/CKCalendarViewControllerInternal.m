@@ -125,6 +125,18 @@
     }
 }
 
+- (NSArray *)barButtonItemsForCalendarView:(CKCalendarView *)calendarView
+{
+    if ( [ self.dataSource respondsToSelector: @selector( barButtonItemsForCalendarView: ) ] )
+    {
+        return [ self.dataSource barButtonItemsForCalendarView: calendarView ];
+    }
+    else
+    {
+        return nil;
+    }
+}
+
 #pragma mark - CKCalendarViewDelegate
 
 // Called before/after the selected date changes
@@ -175,6 +187,21 @@
         
     }
     
+}
+
+- (void)calendarView:(CKCalendarView *)CalendarView didSelectEditingEvents:(NSArray *)events
+{
+    if ([self isEqual:[self delegate]])
+    {
+        return;
+        
+    }
+    
+    if ([[self delegate] respondsToSelector:@selector(calendarView:didSelectEditingEvents:)])
+    {
+        [[self delegate] calendarView:CalendarView didSelectEditingEvents:events];
+        
+    }
 }
 
 #pragma mark - Calendar View

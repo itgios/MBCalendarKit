@@ -22,6 +22,7 @@
 
 //  A row is selected in the events table. (Use to push a detail view or whatever.)
 - (void)calendarView:(CKCalendarView *)CalendarView didSelectEvent:(CKCalendarEvent *)event;
+- (void)calendarView:(CKCalendarView *)CalendarView didSelectEditingEvents:(NSArray *)events;
 
 @end
 

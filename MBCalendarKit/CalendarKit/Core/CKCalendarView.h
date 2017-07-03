@@ -67,6 +67,8 @@
 
 - (void)setTableViewCellClass:(Class)tableViewCellClass;
 
+- (CKCalendarEvent*)selectedEvent;
+
 /* Visible Dates */
 
 - (NSDate *)firstVisibleDate;

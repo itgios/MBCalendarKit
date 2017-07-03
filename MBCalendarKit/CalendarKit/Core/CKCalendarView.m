@@ -68,8 +68,10 @@
         //  Accessory Table
         _table = [UITableView new];
         _table.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        _table.allowsMultipleSelectionDuringEditing = YES;
         [_table setDelegate:self];
         [_table setDataSource:self];
+        [_table addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)]];
         
         [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
         [_table registerClass:[UITableViewCell class] forCellReuseIdentifier:@"noDataCell"];
@@ -97,6 +99,49 @@
         _displayMode = CalendarDisplayMode;
     }
     return self;
+}
+
+-(void)setDataSource:( id< CKCalendarViewDataSource > )data_source_
+{
+    _dataSource = data_source_;
+    
+    if ( [ _dataSource isKindOfClass: [ UIViewController class ] ] )
+    {
+        NSMutableArray* buttons_;
+        
+        if ( [ _dataSource respondsToSelector: @selector( barButtonItemsForCalendarView: ) ] )
+        {
+            buttons_ = [ [ _dataSource barButtonItemsForCalendarView: self ] mutableCopy ];
+        }
+        
+        if ( !buttons_ )
+        {
+            buttons_ = [ NSMutableArray new ];
+        }
+        
+        [ buttons_ addObject: [ [ UIBarButtonItem alloc ] initWithBarButtonSystemItem: UIBarButtonSystemItemFlexibleSpace target: nil action: nil ] ];
+        [ buttons_ addObject: [ [ UIBarButtonItem alloc ] initWithTitle: NSLocalizedString( @"Cancel", nil )
+                                                                  style: UIBarButtonItemStylePlain
+                                                                 target: self
+                                                                 action: @selector( cancelAction ) ] ];
+        
+        ( (UIViewController*)self.dataSource ).toolbarItems = buttons_;
+    }
+}
+
+-(CKCalendarEvent*)selectedEvent
+{
+    NSIndexPath* index_path_ = _table.indexPathForSelectedRow;
+    
+    if ( index_path_ )
+    {
+        NSInteger index_ = index_path_.row;
+        return ( index_ >= 0 && index_ < self.events.count ) ? [ self.events objectAtIndex: index_ ] : nil;
+    }
+    else
+    {
+        return nil;
+    }
 }
 
 #pragma mark - Reload
@@ -1010,18 +1055,51 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+-(void)tableView:( UITableView* )table_view_ didSelectRowAtIndexPath:( NSIndexPath* )index_path_
 {
-    
-    if ([[self events] count] == 0) {
-        return;
+    if ( table_view_.editing )
+    {
+        if ( [ self.delegate respondsToSelector: @selector( calendarView:didSelectEditingEvents: ) ] )
+        {
+            NSArray* index_paths_ = table_view_.indexPathsForSelectedRows;
+            NSMutableArray* events_ = [ NSMutableArray new ];
+            
+            for ( NSIndexPath* path_ in index_paths_ )
+            {
+                [ events_ addObject: [ self.events objectAtIndex: path_.row ] ];
+            }
+            
+            [ self.delegate calendarView: self didSelectEditingEvents: events_ ];
+        }
     }
-    
-    if ([[self delegate] respondsToSelector:@selector(calendarView:didSelectEvent:)]) {
-        [[self delegate] calendarView:self didSelectEvent:[self events][[indexPath row]]];
+    else
+    {
+        if ( self.events.count > 0 && [ self.delegate respondsToSelector: @selector( calendarView:didSelectEvent: ) ] )
+        {
+            [ self.delegate calendarView: self didSelectEvent: [ self.events objectAtIndex: index_path_.row ] ];
+        }
+        
+        [ table_view_ deselectRowAtIndexPath: index_path_ animated: YES ];
     }
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+-(void)tableView:( UITableView* )table_view_ didDeselectRowAtIndexPath:( NSIndexPath* )index_path_
+{
+    if ( table_view_.editing )
+    {
+        if ( [ self.delegate respondsToSelector: @selector( calendarView:didSelectEditingEvents: ) ] )
+        {
+            NSArray* index_paths_ = table_view_.indexPathsForSelectedRows;
+            NSMutableArray* events_ = [ NSMutableArray new ];
+            
+            for ( NSIndexPath* path_ in index_paths_ )
+            {
+                [ events_ addObject: [ self.events objectAtIndex: path_.row ] ];
+            }
+            
+            [ self.delegate calendarView: self didSelectEditingEvents: events_ ];
+        }
+    }
 }
 
 -(UITableViewCellEditingStyle)tableView:( UITableView* )table_view_ editingStyleForRowAtIndexPath:( NSIndexPath* )index_path_
@@ -1038,6 +1116,36 @@
     else
     {
         return nil;
+    }
+}
+
+#pragma mark - Table Long Press
+
+-(void)handleLongPress:( UILongPressGestureRecognizer* )gesture_recognizer_
+{
+    NSIndexPath* index_path_ = [ _table indexPathForRowAtPoint: [ gesture_recognizer_ locationInView: _table ] ];
+    
+    if ( self.events.count > 0 && !_table.editing && index_path_ != nil && gesture_recognizer_.state == UIGestureRecognizerStateBegan )
+    {
+        [ self applyEditMode: YES ];
+        
+        [ _table selectRowAtIndexPath: index_path_ animated: YES scrollPosition: UITableViewScrollPositionNone ];
+        [ self tableView: _table didSelectRowAtIndexPath: index_path_ ];
+    }
+}
+
+-(void)cancelAction
+{
+    [ self applyEditMode: NO ];
+}
+
+-(void)applyEditMode:( BOOL )edit_
+{
+    [ _table setEditing: edit_ animated: YES ];
+    
+    if ( [ self.dataSource isKindOfClass: [ UIViewController class ] ] )
+    {
+        [ ((UIViewController*)self.dataSource).navigationController setToolbarHidden: !edit_ animated: YES ];
     }
 }
 

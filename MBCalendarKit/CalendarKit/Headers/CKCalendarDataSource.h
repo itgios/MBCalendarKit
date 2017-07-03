@@ -17,6 +17,7 @@
 - (NSArray *)calendarView:(CKCalendarView *)calendarView eventsForDate:(NSDate *)date;
 
 @optional
+- (NSArray *)barButtonItemsForCalendarView:(CKCalendarView *)calendarView;
 - (NSArray *)calendarView:(CKCalendarView *)calendarView actionsForEvent:(CKCalendarEvent *)event;
 
 @end
