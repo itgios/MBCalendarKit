@@ -30,15 +30,9 @@
 {
     [ super viewDidLoad ];
     
-    if ( [ self respondsToSelector: @selector( setEdgesForExtendedLayout: ) ] )
-    {
-        self.edgesForExtendedLayout = UIRectEdgeNone;
-    }
-    
-    if ( [ self respondsToSelector: @selector( setAutomaticallyAdjustsScrollViewInsets: ) ] )
-    {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    self.tableView.backgroundColor = [ UIColor whiteColor ];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     self.title = NSLocalizedString( @"Calendar", nil );
     self.events = [ NSMutableArray new ];

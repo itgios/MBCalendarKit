@@ -11,7 +11,7 @@
 #import "CKCalendarDelegate.h"
 #import "CKCalendarDataSource.h"
 
-@interface CKCalendarViewControllerInternal : UIViewController
+@interface CKCalendarViewControllerInternal : UITableViewController
 
 @property (nonatomic, assign) id<CKCalendarViewDataSource> dataSource;
 @property (nonatomic, assign) id<CKCalendarViewDelegate> delegate;
