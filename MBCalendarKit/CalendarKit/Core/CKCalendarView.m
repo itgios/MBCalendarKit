@@ -1145,7 +1145,13 @@
     
     if ( [ self.dataSource isKindOfClass: [ UIViewController class ] ] )
     {
-        [ ((UIViewController*)self.dataSource).navigationController setToolbarHidden: !edit_ animated: YES ];
+        UIViewController* controller_ = (UIViewController*)self.dataSource;
+        
+        controller_.navigationItem.titleView.hidden = edit_;
+        controller_.navigationItem.rightBarButtonItem.enabled = !edit_;
+        controller_.navigationItem.leftBarButtonItems.lastObject.enabled = !edit_;
+        
+        [ controller_.navigationController setToolbarHidden: !edit_ animated: YES ];
     }
 }
 
