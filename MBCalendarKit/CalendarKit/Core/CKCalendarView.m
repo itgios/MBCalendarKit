@@ -69,6 +69,7 @@
         _table = [UITableView new];
         _table.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         _table.allowsMultipleSelectionDuringEditing = YES;
+        _table.separatorStyle = UITableViewCellSeparatorStyleNone;
         [_table setDelegate:self];
         [_table setDataSource:self];
         [_table addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)]];
