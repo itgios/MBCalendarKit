@@ -37,7 +37,7 @@
     self.title = NSLocalizedString( @"Calendar", nil );
     self.events = [ NSMutableArray new ];
     
-    CGFloat top_view_height_ = 40.f;
+    CGFloat top_view_height_ = 42.f;
     
     UIView* top_view_ = [ [ UIView alloc ] initWithFrame: CGRectMake( 0.f, 0.f, self.view.frame.size.width, top_view_height_ ) ];
     top_view_.backgroundColor = [ UIColor whiteColor ];
