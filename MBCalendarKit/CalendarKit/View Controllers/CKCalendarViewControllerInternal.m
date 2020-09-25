@@ -30,24 +30,34 @@
 {
     [ super viewDidLoad ];
     
-    self.edgesForExtendedLayout = UIRectEdgeNone;
-    self.tableView.backgroundColor = [ UIColor whiteColor ];
+    self.tableView.allowsSelection = NO;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.extendedLayoutIncludesOpaqueBars = YES;
     
     self.title = NSLocalizedString( @"Calendar", nil );
     self.events = [ NSMutableArray new ];
     
-    CGFloat top_view_height_ = 42.f;
+    UIView* top_view_ = [ UIView new ];
+    [ self.tableView addSubview: top_view_ ];
+    top_view_.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UIView* top_view_ = [ [ UIView alloc ] initWithFrame: CGRectMake( 0.f, 0.f, self.view.frame.size.width, top_view_height_ ) ];
-    top_view_.backgroundColor = [ UIColor whiteColor ];
-    top_view_.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [ self.tableView addConstraints: @[
+        [ top_view_.heightAnchor constraintEqualToConstant: 42.f ],
+        [ top_view_.topAnchor constraintEqualToAnchor: self.tableView.topAnchor ],
+        [ top_view_.leadingAnchor constraintEqualToAnchor: self.tableView.safeAreaLayoutGuide.leadingAnchor constant: 5.f ],
+        [ top_view_.trailingAnchor constraintEqualToAnchor: self.tableView.safeAreaLayoutGuide.trailingAnchor  constant: -5.f ]
+    ] ];
     
-    UIView* bottom_view_ = [ [ UIView alloc ] initWithFrame: CGRectMake( 0.f, top_view_height_, self.view.frame.size.width, self.view.frame.size.height - top_view_height_ ) ];
-    bottom_view_.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    UIView* bottom_view_ = [ UIView new ];
+    [ self.tableView addSubview: bottom_view_ ];
+    bottom_view_.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [ self.view addSubview: top_view_ ];
-    [ self.view addSubview: bottom_view_ ];
+    [ self.tableView addConstraints: @[
+        [ bottom_view_.topAnchor constraintEqualToAnchor: top_view_.bottomAnchor ],
+        [ bottom_view_.bottomAnchor constraintEqualToAnchor: self.tableView.safeAreaLayoutGuide.bottomAnchor ],
+        [ bottom_view_.leadingAnchor constraintEqualToAnchor: self.tableView.safeAreaLayoutGuide.leadingAnchor ],
+        [ bottom_view_.trailingAnchor constraintEqualToAnchor: self.tableView.safeAreaLayoutGuide.trailingAnchor ]
+    ] ];
     
     self.calendarView = [ CKCalendarView new ];
     self.calendarView.dataSource = self;
@@ -56,10 +66,13 @@
     [ self.calendarView setCalendar: [ [ NSCalendar alloc ] initWithCalendarIdentifier: NSCalendarIdentifierGregorian ] animated: NO ];
     [ self.calendarView setDisplayMode: CKCalendarViewModeMonth animated: NO ];
     
-    self.modePicker = [ [ UISegmentedControl alloc ] initWithItems: @[ NSLocalizedString(@"Month", nil ), NSLocalizedString( @"Week", nil ), NSLocalizedString( @"Day", nil ) ] ];
-    self.modePicker.frame = CGRectMake( 5.f, 10.f, top_view_.frame.size.width - 10.f, self.modePicker.frame.size.height );
+    self.modePicker = [ [ UISegmentedControl alloc ] initWithItems: @[ NSLocalizedString(@"Month", nil ),
+                                                                       NSLocalizedString( @"Week", nil ),
+                                                                       NSLocalizedString( @"Day", nil ) ] ];
+    self.modePicker.frame = CGRectMake( 0.f, 10.f, top_view_.frame.size.width, self.modePicker.frame.size.height );
     self.modePicker.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    [ self.modePicker addTarget: self action: @selector( modeChangedUsingControl: ) forControlEvents: UIControlEventValueChanged ];
+    [ self.modePicker addTarget: self action: @selector( modeChangedUsingControl: )
+               forControlEvents: UIControlEventValueChanged ];
     [ self.modePicker setSelectedSegmentIndex: 1 ];
     [ self modeChangedUsingControl: self.modePicker ];
     [ top_view_ addSubview: self.modePicker ];
